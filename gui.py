@@ -3,6 +3,7 @@
 
 from six.moves import input
 from datetime import datetime
+import d2date
 
 
 handlers = [None, None]
@@ -54,4 +55,8 @@ def showDate(d):
     print("Date\t\t", d.date.strftime(tf))
     print("Gregorian\t", d.getGregorian().strftime(tf))
     print("Julian\t\t", d.getJulian().strftime(tf))
+    print("Bizantine\t", d.getByzantine(d2date.CT_BYZ_03).strftime(tf), "\t", d.getByzantine(d2date.CT_BYZ_09).strftime(tf))
+    print("AUC\t\t", d.getAUC().strftime(tf))
+    print("Armenic\t\t", d.getArmenic().strftime(tf))
+    print(d.getChineese())
     print(d.date.strftime(tf))
