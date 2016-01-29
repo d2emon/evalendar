@@ -5,7 +5,11 @@ import gui
 import sys
 import getopt
 import yaml
+from datetime import datetime
 from d2date import D2Date
+
+
+dates = [None, None]
 
 
 def showPeople():
@@ -19,6 +23,7 @@ def showPeople():
         for p in people:
             print('\033[95m' + p["name"] + '\033[0m', p)
 
+
 def dateCustom():
     d = D2Date(gui.inputDate())
     gui.showDate(d)
@@ -26,8 +31,12 @@ def dateCustom():
 
 
 def dateToday():
-    d = D2Date()
-    gui.showDate(d)
+    d = [
+        D2Date(dates[0]),
+        D2Date(dates[1]),
+    ]
+    gui.showDate(d[0])
+    gui.showDate(d[1])
     showPeople()
     return True
 
@@ -41,24 +50,32 @@ def helpMessage():
     sys.exit(2)
 
 
+def prepareDates():
+    if dates[1] is None:
+        dates[1] = datetime.today()
+    if dates[0] is None:
+        dates[0] = dates[1]
+
+
 def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hb:e:i", ["help", "begin=", "end=", "interactive"])
     except(getopt.GetoptError):
         helpMessage()
 
-    dates = [None, None]
+    global dates
     interactive = False
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             helpMessage()
         elif opt in ("-b", "--begin"):
-            dates[0] = arg
+            dates[0] = datetime.strptime(arg, "%d.%m.%Y")
         elif opt in ("-e", "--end"):
-            dates[1] = arg
+            dates[1] = datetime.strptime(arg, "%d.%m.%Y")
         elif opt in ("-i", "--interactive"):
             interactive = True
 
+    prepareDates()
     gui.handlers = [
         stopLoop,
         dateCustom,
