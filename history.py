@@ -4,8 +4,20 @@
 import gui
 import sys
 import getopt
+import yaml
 from d2date import D2Date
 
+
+def showPeople():
+    people = []
+    print(people)
+    with open("people.yml", 'r') as f:
+        data = list(yaml.safe_load_all(f))
+    print(data)
+    for people in data:
+        print(people)
+        for p in people:
+            print('\033[95m' + p["name"] + '\033[0m', p)
 
 def dateCustom():
     d = D2Date(gui.inputDate())
@@ -16,6 +28,7 @@ def dateCustom():
 def dateToday():
     d = D2Date()
     gui.showDate(d)
+    showPeople()
     return True
 
 
