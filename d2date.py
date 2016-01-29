@@ -12,6 +12,12 @@ CT_AUC = 4
 CT_ARMENIC = 5
 
 
+def parseDate(date=None):
+    if date is None:
+        date = datetime.today()
+    return D2Date(datetime.strptime(date, "%d.%m.%Y"))
+
+
 class D2Date():
     def __init__(self, date=None, calendar_type=CT_GREGORIAN):
         if date is None:
@@ -19,6 +25,12 @@ class D2Date():
         else:
             self.date = date
         self.calendar_type = calendar_type
+
+    def __repr__(self):
+        return str(self.date)
+
+    def __str__(self):
+        return str(self.date)
 
     def getCentury(self):
         return int(self.date.year / 100) + 1

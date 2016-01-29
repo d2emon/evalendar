@@ -5,38 +5,43 @@ import gui
 import sys
 import getopt
 import yaml
+import d2date
 from datetime import datetime
-from d2date import D2Date
+from people import Person
+
+dates = [
+    d2date.D2Date(),
+    d2date.D2Date(),
+]
 
 
-dates = [None, None]
-
-
-def showPeople():
+def loadPeople():
     people = []
     print(people)
     with open("people.yml", 'r') as f:
         data = list(yaml.safe_load_all(f))
-    print(data)
-    for people in data:
-        print(people)
-        for p in people:
-            print('\033[95m' + p["name"] + '\033[0m', p)
+    for d in data:
+        for p in d:
+            people.append(Person(p))
+    return people
+
+
+def showPeople(dates=[]):
+    people = loadPeople()
+    print(people)
+    for p in people:
+        print(p)
 
 
 def dateCustom():
-    d = D2Date(gui.inputDate())
+    d = d2date.D2Date(gui.inputDate())
     gui.showDate(d)
     return True
 
 
 def dateToday():
-    d = [
-        D2Date(dates[0]),
-        D2Date(dates[1]),
-    ]
-    gui.showDate(d[0])
-    gui.showDate(d[1])
+    gui.showDate(dates[0])
+    gui.showDate(dates[1])
     showPeople()
     return True
 
@@ -55,6 +60,8 @@ def prepareDates():
         dates[1] = datetime.today()
     if dates[0] is None:
         dates[0] = dates[1]
+    if dates[0].date > dates[1].date:
+        dates[0], dates[1] = dates[1], dates[0]
 
 
 def main(argv):
@@ -69,9 +76,9 @@ def main(argv):
         if opt in ("-h", "--help"):
             helpMessage()
         elif opt in ("-b", "--begin"):
-            dates[0] = datetime.strptime(arg, "%d.%m.%Y")
+            dates[0] = d2date.parseDate(arg)
         elif opt in ("-e", "--end"):
-            dates[1] = datetime.strptime(arg, "%d.%m.%Y")
+            dates[1] = d2date.parseDate(arg)
         elif opt in ("-i", "--interactive"):
             interactive = True
 
