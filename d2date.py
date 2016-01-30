@@ -11,11 +11,49 @@ CT_BYZ_09 = 3
 CT_AUC = 4
 CT_ARMENIC = 5
 
+DATE_FORMAT = "%d.%m.%Y"
+
 
 def parseDate(date=None):
     if date is None:
         date = datetime.today()
-    return D2Date(datetime.strptime(date, "%d.%m.%Y"))
+    return D2Date(datetime.strptime(date, DATE_FORMAT))
+
+
+def parsePeriod(*dates):
+    return D2Period([parseDate(d) for d in dates])
+
+
+class D2Period():
+    def __init__(self, dates=[None, None]):
+        if len(dates) < 1:
+            dates.append(None)
+        if len(dates) < 2:
+            dates.append(None)
+        self.beginDate, self.endDate = dates[:2]
+        self.setupDates()
+
+    def setupDates(self):
+        if (self.beginDate is not None) or (self.endDate is None):
+            return
+        if self.beginDate.date > self.endDate.date:
+            self.beginDate, self.endDate = self.endDate, self.beginDate
+
+    def getYears(self, date=None):
+        if date is None:
+            date = D2Date()
+        if self.beginDate is None:
+            return 0
+        if self.endDate is None:
+            self.endDate = date
+        return relativedelta.relativedelta(self.endDate.date, self.beginDate.date).years
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        datetexts = [[str(d), "..."][d is None] for d in [self.beginDate, self.endDate]]
+        return ("%s (%d)" % ("-".join(datetexts), self.getYears()))
 
 
 class D2Date():
@@ -27,10 +65,10 @@ class D2Date():
         self.calendar_type = calendar_type
 
     def __repr__(self):
-        return str(self.date)
+        return self.__str__()
 
     def __str__(self):
-        return str(self.date)
+        return self.date.strftime(DATE_FORMAT)
 
     def getCentury(self):
         return int(self.date.year / 100) + 1

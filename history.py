@@ -6,8 +6,8 @@ import sys
 import getopt
 import yaml
 import d2date
+import person
 from datetime import datetime
-from people import Person
 
 dates = [
     d2date.D2Date(),
@@ -15,20 +15,8 @@ dates = [
 ]
 
 
-def loadPeople():
-    people = []
-    print(people)
-    with open("people.yml", 'r') as f:
-        data = list(yaml.safe_load_all(f))
-    for d in data:
-        for p in d:
-            people.append(Person(p))
-    return people
-
-
 def showPeople(dates=[]):
-    people = loadPeople()
-    print(people)
+    people = person.loadPeople("people.yml")
     for p in people:
         print(p)
 
