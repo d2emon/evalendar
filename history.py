@@ -4,9 +4,9 @@
 import gui
 import sys
 import getopt
-import yaml
 import d2date
 import person
+import event
 from datetime import datetime
 
 dates = [
@@ -15,10 +15,27 @@ dates = [
 ]
 
 
+def showPerson(person, **options):
+    print("\033[95m%s\033[0m\t%s\t%d" % (person.name, person.life, person.life.fromFirst()))
+    if options.get("full", False):
+        titles = [showTitle(t) for t in person.titles]
+
+
+def showTitle(title):
+    print("\033[96m%s\033[0m" % (title.title))
+    for d in title.dates:
+        print("\t%s" % (d))
+
+
 def showPeople(dates=[]):
     people = person.loadPeople("people.yml")
     for p in people:
-        print(p)
+        showPerson(p, full=True)
+
+
+def showEvents():
+    events = event.loadEvents("config.yml")
+    print(events)
 
 
 def dateCustom():
@@ -31,6 +48,7 @@ def dateToday():
     gui.showDate(dates[0])
     gui.showDate(dates[1])
     showPeople()
+    showEvents()
     return True
 
 

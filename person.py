@@ -8,10 +8,9 @@ import d2date
 def loadPeople(filename):
     people = []
     with open(filename, 'r') as f:
-        blocks = list(yaml.safe_load_all(f))
-    for block in blocks:
-        for p in block:
-            people.append(Person(p))
+        blocks = list(yaml.safe_load_all(f))[0]
+    for block in blocks.get("people", []):
+        people.append(Person(block))
     return people
 
 
@@ -25,7 +24,7 @@ class Title():
         self.data = data
 
     def __repr__(self):
-        return "\n".join("\t\033[96m%s\033[0m\t%s" % (self.title, str(t)) for t in self.dates)
+        return self.title
 
 
 class Person():
@@ -41,5 +40,4 @@ class Person():
         self.data = data
 
     def __repr__(self):
-        titles = "\n".join((str(t) for t in self.titles))
-        return "\033[95m%s\033[0m\t%s\n%s\n" % (self.name, self.life, titles)
+        return self.name
