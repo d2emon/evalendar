@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 # -*- coding:utf-8 -*-
+import flexidate
 from datetime import datetime, timedelta
 from dateutil import relativedelta
 
@@ -17,7 +18,7 @@ DATE_FORMAT = "%d.%m.%Y"
 def parseDate(date=None):
     if date is None:
         date = datetime.today()
-    return D2Date(datetime.strptime(date, DATE_FORMAT))
+    return D2Date(flexidate.parse(date))
 
 
 def parsePeriod(*dates):
@@ -48,6 +49,29 @@ class D2Period():
             self.endDate = date
         return relativedelta.relativedelta(self.endDate.date, self.beginDate.date).years
 
+    def fromFirst(self, date=None):
+        if date is None:
+            date = D2Date()
+        if self.beginDate is None:
+            return 0
+        return relativedelta.relativedelta(date.date, self.beginDate.date).years
+
+    def isInPeriod(self, date):
+        fit = True
+        if self.beginDate is not None:
+            fit = (date.date > self.beginDate.date)
+        if self.endDate is not None:
+            fit = (date.date < self.endDate.date)
+        return fit
+
+    def isIntersect(self, period):
+        fit = True
+        if self.beginDate is not None:
+            fit = (period.endDate.date > self.beginDate.date)
+        if self.endDate is not None:
+            fit = (period.beginDate.date < self.endDate.date)
+        return fit
+
     def __repr__(self):
         return self.__str__()
 
@@ -59,7 +83,7 @@ class D2Period():
 class D2Date():
     def __init__(self, date=None, calendar_type=CT_GREGORIAN):
         if date is None:
-            self.date = datetime.today()
+            self.date = flexidate.FlexiDate()
         else:
             self.date = date
         self.calendar_type = calendar_type
